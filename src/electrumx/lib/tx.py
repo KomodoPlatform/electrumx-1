@@ -544,7 +544,9 @@ class DeserializerZcash(DeserializerEquihash):
                 # Transparent Transaction Fields
                 self._read_inputs(),    # inputs
                 self._read_outputs(),   # outputs
-                nLockTime               # locktime
+                nLockTime,              # locktime
+                txid=None,
+                wtxid=None,
             )
             # Sapling Transaction Fields (SaplingBundle)
             nSpendsSapling = self._read_varint()
