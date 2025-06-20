@@ -577,7 +577,11 @@ class DeserializerZcash(DeserializerEquihash):
         # TODO: read how we get read of read_tx_and_hash, changes in read_tx_block, etc.
         # https://github.com/spesmilo/electrumx/commit/9c123a79962bdb3b95270fb44c7459ea9c4c985d
         # base_tx.txid = base_tx.wtxid = self.TX_HASH_FN(self.binary[start:self.cursor])
-        _, txid = self.read_tx_and_hash()
+
+        if (version < 5):
+            txid = double_sha256(self.binary[start:self.cursor])
+        else:
+            txid = self.zcash_txid_v5(self.binary[start:self.cursor])
         base_tx.txid = base_tx.wtxid = txid
         return base_tx
 
@@ -592,20 +596,6 @@ class DeserializerZcash(DeserializerEquihash):
         tx.rehash()
         # print(repr(tx))
         return bytes(reversed(hex_str_to_bytes(tx.hash)))
-
-    def read_tx_and_hash(self):
-        '''Return a (deserialized TX, tx_hash) pair.
-
-        The hash needs to be reversed for human display; for efficiency
-        we process it in the natural serialized order.
-        '''
-        start = self.cursor
-        _tx = self.read_tx()
-        if (_tx.version < 5):
-            _txhash = double_sha256(self.binary[start:self.cursor])
-        else:
-            _txhash = self.zcash_txid_v5(self.binary[start:self.cursor])
-        return _tx, _txhash
 
 @dataclass(kw_only=True, slots=True)
 class TxPIVX(Tx):
