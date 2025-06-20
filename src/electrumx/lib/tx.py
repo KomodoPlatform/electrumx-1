@@ -540,11 +540,11 @@ class DeserializerZcash(DeserializerEquihash):
             nLockTime = self._read_le_uint32()
             self.cursor += 4  # nExpiryHeight
             base_tx = Tx(
-                version,
+                version=version,
                 # Transparent Transaction Fields
-                self._read_inputs(),    # inputs
-                self._read_outputs(),   # outputs
-                nLockTime,              # locktime
+                inputs=self._read_inputs(),     # inputs
+                outputs=self._read_outputs(),   # outputs
+                locktime=nLockTime,             # locktime
                 txid=None,
                 wtxid=None,
             )
